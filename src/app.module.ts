@@ -51,7 +51,6 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
-    CommonModule,
     UsersModule,
   ],
   controllers: [],
