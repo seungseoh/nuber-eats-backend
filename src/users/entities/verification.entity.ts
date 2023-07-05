@@ -12,7 +12,8 @@ export class Verification extends CoreEntity {
   @Field((type) => String)
   code: string;
 
-  @OneToOne((type) => User)
+  //Relation과 별개로 삭제가 가능해진다 CASCADE
+  @OneToOne(type => User, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
 
