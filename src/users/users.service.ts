@@ -94,7 +94,6 @@ export class UserService {
         user,
       };
     } catch (error) {
-      console.log('#######findById');
       return { ok: false, error: 'User Not Found' };
     }
   }
@@ -114,7 +113,7 @@ export class UserService {
   ): Promise<EditProfileOutput> {
     try {
       const user = await this.users.findOne({ where: { id } });
-      console.log(user);
+      // console.log(user);
       if (email) {
         user.email = email;
         user.verified = false;
