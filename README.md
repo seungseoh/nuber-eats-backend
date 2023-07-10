@@ -2,27 +2,14 @@
 
 The Backend of Nuber Eats Clone
 
-## User Entity:
+- See Categories
+- See Restaurants by Category (pagination)
+- See Restaurants (pagination)
+- See Restaurant
 
-- id
-- createdAt
-- updatedAt
+- Edit Restaurant
+- Delete Restaurant
 
-- email
-- password
-- role(client|owner|delivery)
-
-## User CRUD:
-
-- Create Account
-- Log In
-- See Profile
-- Edit Profile
-- Verify Email
-
-## Restaurant Model
-
-- name
-- category
-- address
-- coverImage
+- Create Dish
+- Edit Dish
+- Delete Dish
