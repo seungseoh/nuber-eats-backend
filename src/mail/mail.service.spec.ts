@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
 import got from 'got';
 import * as FormData from 'form-data';
-import { CONFIG_OPTIONS } from 'src/jwt/jwt.constants';
 import { MailService } from './mail.service';
+import { CONFIG_OPTIONS } from 'src/common/common.constants';
 
 jest.mock('got');
 jest.mock('form-data');
