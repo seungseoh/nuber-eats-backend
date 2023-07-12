@@ -8,7 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
-import { ApolloDriver } from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
@@ -64,17 +64,22 @@ import { OrderItem } from './orders/entities/order-item.entity';
         OrderItem,
       ],
     }),
-    GraphQLModule.forRoot({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      installSubscriptionHandlers: true,
       autoSchemaFile: true,
-      context: ({ req, connection }) => {
-        if (req) {
-          return { user: req['user'] };
-        } else {
-          console.log(connection);
-        }
+      subscriptions: {
+        'subscriptions-transport-ws': {
+          onConnect: (connectionParams: any) => {
+            const authToken = connectionParams['x-jwt'];
+            if (!authToken) {
+              throw new Error('Token is not valid');
+            }
+            const token = authToken;
+            return { token };
+          },
+        },
       },
+      context: ({ req }) => ({ token: req.headers['x-jwt'] }),
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
@@ -92,10 +97,4 @@ import { OrderItem } from './orders/entities/order-item.entity';
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(JwtMiddleware)
-      .forRoutes({ path: '/graphql', method: RequestMethod.POST });
-  }
-}
+export class AppModule {}
