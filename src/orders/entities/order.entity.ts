@@ -30,6 +30,11 @@ export enum OrderStatus {
 
 registerEnumType(OrderStatus, { name: 'OrderStatus' });
 
+/**
+ * Eager relations
+ * Eager relation은 데이터베이스에서 엔티티를 로드할 때마다 자동으로 relation 필드들을 로드합니다.
+ * (eager: true를 추가)
+ */
 @InputType('OrderInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
@@ -38,6 +43,7 @@ export class Order extends CoreEntity {
   @ManyToOne((type) => User, (user) => user.orders, {
     onDelete: 'SET NULL',
     nullable: true,
+    eager: true,
   })
   customer?: User;
 
@@ -48,6 +54,7 @@ export class Order extends CoreEntity {
   @ManyToOne((type) => User, (user) => user.rides, {
     onDelete: 'SET NULL',
     nullable: true,
+    eager: true,
   })
   driver?: User;
 
@@ -58,11 +65,12 @@ export class Order extends CoreEntity {
   @ManyToOne((type) => Restaurant, (restaurant) => restaurant.orders, {
     onDelete: 'SET NULL',
     nullable: true,
+    eager: true,
   })
   restaurant?: Restaurant;
 
   @Field((type) => [OrderItem])
-  @ManyToMany((type) => OrderItem)
+  @ManyToMany((type) => OrderItem, { eager: true })
   @JoinTable()
   items: OrderItem[];
 

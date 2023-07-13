@@ -12,9 +12,11 @@ import { PubSub } from 'graphql-subscriptions';
 import { Inject } from '@nestjs/common';
 import {
   NEW_COOKED_ORDER,
+  NEW_ORDER_UPDATE,
   NEW_PENDING_ORDER,
   PUB_SUB,
 } from 'src/common/common.constants';
+import { OrderUpdatesInput } from './dtos/order-updates.dto';
 
 const pubsub = new PubSub();
 
@@ -81,5 +83,27 @@ export class OrderResolver {
   @Role(['Delivery'])
   cookedOrders() {
     return this.pubSub.asyncIterator(NEW_COOKED_ORDER);
+  }
+
+  @Subscription((returns) => Order, {
+    filter: (
+      { orderUpdates: order }: { orderUpdates: Order },
+      { input }: { input: OrderUpdatesInput },
+      { user }: { user: User },
+    ) => {
+      if (
+        order.driverId !== user.id &&
+        order.customerId !== user.id &&
+        order.restaurant.ownerId !== user.id
+      ) {
+        return false;
+      }
+      return order.id === input.id;
+    },
+  })
+  @Role(['Any'])
+  orderUpdates(@Args('input') orderUpdatesInput: OrderUpdatesInput) {
+    // TODO asyncIterator 를 리턴하기 전에 위의 검증을 체크
+    return this.pubSub.asyncIterator(NEW_ORDER_UPDATE);
   }
 }
